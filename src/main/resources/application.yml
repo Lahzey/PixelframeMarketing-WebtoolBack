@@ -1,0 +1,38 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://127.0.0.1:5432/webtool
+    username: postgres
+    password: 1234
+  jpa:
+    database-platform: org.hibernate.dialect.PosgreSQLInnoDBDialect
+    generate-ddl: true
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        globally_quoted_identifiers: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 1000MB
+      max-request-size: 1000MB
+  mvc:
+    async:
+      request-timeout: 3600000
+server:
+  port: 8080
+  error:
+    path: /user/error
+    whitelabel:
+      enabled: false
+jwt:
+  secret: RDo8Yulg7FPs99LLa+CUURK0n+dJkQPfvVlbgheFncm7jsQYFezkOhEs/IfUG/pnmRhm2j24u29usItUfsDKoQ==
+  token:
+    validity: 2419200 # 4 weeks in seconds (multiplied by 1000 in code)
+    
+logging:
+  level:
+    com.fasterxml.jackson: DEBUG

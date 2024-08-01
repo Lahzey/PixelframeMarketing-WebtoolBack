@@ -1,0 +1,33 @@
+package ch.pixelframemarketing.webtool.data.entity;
+
+import ch.pixelframemarketing.webtool.general.enums.Visibility;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.OneToMany;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.util.Date;
+import java.util.List;
+
+@Entity(name = "brand_listing")
+@Getter
+@Setter
+@NoArgsConstructor
+public class BrandListing extends ProductListing {
+    
+    @OneToMany(mappedBy = "brandListing", fetch = FetchType.LAZY)
+    private List<Contract> contracts;
+
+    public BrandListing(String id, User owner, Date createdAt, String title, Visibility visibility, String[] tags, String ageRestriction, ImageMetadata thumbnailMetadata, String description, Page page, List<Contract> contracts) {
+        super(id, owner, createdAt, title, visibility, tags, ageRestriction, thumbnailMetadata, description, page);
+        this.contracts = contracts;
+    }
+
+    public BrandListing(String id) {
+        setId(id);
+    }
+    
+}
