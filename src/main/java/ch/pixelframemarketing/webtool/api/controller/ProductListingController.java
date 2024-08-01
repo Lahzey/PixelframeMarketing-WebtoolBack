@@ -9,7 +9,6 @@ import ch.pixelframemarketing.webtool.logic.service.GameListingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -24,14 +23,13 @@ public class ProductListingController {
 
     @GetMapping("/{id}")
     @Secure
-    @Transactional
     public ResponseEntity<ProductListingDTO> getProductListing(@PathVariable(value = "id") String id) {
         ProductListingDTO result;
-        GameListing gameListing = gameListingService.getGameListing(id);
+        GameListing gameListing = gameListingService.getGameListingOrNull(id);
         if (gameListing != null) {
             result = new ProductListingDTO(gameListing, true);
         } else {
-            BrandListing brandListing = brandListingService.getBrandListing(id);
+            BrandListing brandListing = brandListingService.getBrandListingOrNull(id);
             if (brandListing != null) {
                 result = new ProductListingDTO(brandListing, false);
             } else {
@@ -43,7 +41,6 @@ public class ProductListingController {
 
     @PostMapping
     @Secure
-    @Transactional
     public ResponseEntity<ProductListingDTO> createProductListing(@RequestBody ProductListingDTO productListingDTO) {
         if (productListingDTO.type == ProductType.GAME) {
             productListingDTO = new ProductListingDTO(gameListingService.createGameListing(productListingDTO.toGameListing()), true);
@@ -58,7 +55,6 @@ public class ProductListingController {
     
     @PutMapping("/{id}")
     @Secure
-    @Transactional
     public ResponseEntity<ProductListingDTO> updateProductListing(@PathVariable(value = "id") String id, @RequestBody ProductListingDTO productListingDTO) {
         productListingDTO.id = id;
         if (productListingDTO.type == ProductType.GAME) {
@@ -74,7 +70,6 @@ public class ProductListingController {
 
     @GetMapping
     @Secure
-    @Transactional
     public ResponseEntity<Page<ProductListingDTO>> fitlerProductListings(
             @RequestParam(value = "type") ProductType type,
             @RequestParam(value = "ownerId") String ownerId,

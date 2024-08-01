@@ -64,7 +64,7 @@ public class UserService {
         
         userDTO.password = PASSWORD_ENCODER.encode(userDTO.password);
         User user = new User();
-        userDTO.transferToEntity(user, imageRepository);
+        userDTO.transferToEntity(user);
         return userRepository.save(user);
     }
 
@@ -72,7 +72,7 @@ public class UserService {
         validateUserDTO(userDTO);
         
         User user = findUserById(userDTO.id);
-        userDTO.transferToEntity(user, imageRepository);
+        userDTO.transferToEntity(user);
         return userRepository.save(user);
     }
     

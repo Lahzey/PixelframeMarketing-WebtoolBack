@@ -18,7 +18,7 @@ import java.util.List;
 @NoArgsConstructor
 public class GameListing extends ProductListing {
 
-    @OneToMany(mappedBy = "gameListing", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "gameListing", fetch = FetchType.LAZY)
     private List<Contract> contracts;
 
     public GameListing(String id, User owner, Date createdAt, String title, Visibility visibility, String[] tags, String ageRestriction, ImageMetadata thumbnailMetadata, String description, Page page, List<Contract> contracts) {

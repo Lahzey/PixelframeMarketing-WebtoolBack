@@ -3,6 +3,7 @@ package ch.pixelframemarketing.webtool.logic.service;
 import ch.pixelframemarketing.webtool.data.entity.BrandListing;
 import ch.pixelframemarketing.webtool.data.repository.BrandListingRepository;
 import ch.pixelframemarketing.webtool.data.repository.ProductListingSpecification;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,10 +14,10 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 @Service
 @Slf4j
+@Transactional(rollbackOn = Exception.class)
 @RequiredArgsConstructor
 public class BrandListingService {
     
@@ -34,12 +35,12 @@ public class BrandListingService {
         return brandListingRepository.findAll(PageRequest.of(page, size, Sort.by("createdAt").descending()));
     }
 
-    public BrandListing getBrandListing(String id) {
-        return brandListingRepository.findById(id).orElseThrow(() -> new RuntimeException("Game Listing not found"));
+    public BrandListing getBrandListingOrNull(String id) {
+        return brandListingRepository.findById(id).orElse(null);
     }
 
     public BrandListing createBrandListing(BrandListing brandListing) {
-        brandListing.setCreatedAt(new Date());
+        validateBrandListing(brandListing);
         return brandListingRepository.save(brandListing);
     }
 
@@ -50,8 +51,7 @@ public class BrandListingService {
     
     private void validateBrandListing(BrandListing brandListing) {
         BrandListing existingBrandListing = brandListing.getId() != null ? brandListingRepository.findById(brandListing.getId()).orElse(null) : null;
-        
-        // properties that the user may not change
+        brandListing.validate(existingBrandListing);
         brandListing.setContracts(existingBrandListing != null ? existingBrandListing.getContracts() : new ArrayList<>());
     }
 

@@ -48,5 +48,13 @@ public class ProductListing {
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "page_id", nullable = false)
     private Page page;
+    
+    
+    public void validate(ProductListing existing) {
+        boolean exists = existing != null;
+
+        // properties that the user may not change
+        setCreatedAt(exists ? existing.getCreatedAt() : new Date());
+    }
 
 }

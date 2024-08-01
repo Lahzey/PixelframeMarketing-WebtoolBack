@@ -39,7 +39,7 @@ public class ImageController {
     }
 
     @GetMapping(value = "/{id}")
-    @Secure
+    // this MUST NOT have a secure tag, as the <img> tags do not send the bearer string (login token)
     public ResponseEntity<Resource> getImage(@PathVariable(value = "id") String id) {
         File imageFile = imageService.getImage(id);
         if (imageFile == null || !imageFile.exists()) {

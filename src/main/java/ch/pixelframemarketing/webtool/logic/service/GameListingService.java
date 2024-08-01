@@ -1,9 +1,9 @@
 package ch.pixelframemarketing.webtool.logic.service;
 
 import ch.pixelframemarketing.webtool.data.entity.GameListing;
-import ch.pixelframemarketing.webtool.data.entity.ProductListing;
 import ch.pixelframemarketing.webtool.data.repository.GameListingRepository;
 import ch.pixelframemarketing.webtool.data.repository.ProductListingSpecification;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +14,10 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 @Service
 @Slf4j
+@Transactional(rollbackOn = Exception.class)
 @RequiredArgsConstructor
 public class GameListingService {
     
@@ -32,8 +32,8 @@ public class GameListingService {
         return gameListingRepository.findAll(spec, PageRequest.of(page, size, Sort.by("createdAt").descending()));
     }
 
-    public GameListing getGameListing(String id) {
-        return gameListingRepository.findById(id).orElseThrow(() -> new RuntimeException("Game Listing not found"));
+    public GameListing getGameListingOrNull(String id) {
+        return gameListingRepository.findById(id).orElse(null);
     }
 
     public GameListing createGameListing(GameListing gameListing) {
@@ -48,15 +48,8 @@ public class GameListingService {
     
     private void validateGameListing(GameListing gameListing) {
         GameListing existingGameListing = gameListing.getId() != null ? gameListingRepository.findById(gameListing.getId()).orElse(null) : null;
-        validateProductListing(gameListing, existingGameListing);
+        gameListing.validate(existingGameListing);
         gameListing.setContracts(existingGameListing != null ? existingGameListing.getContracts() : new ArrayList<>());
-    }
-
-    private void validateProductListing(ProductListing productLsting, ProductListing existingProductListing) {
-        boolean exists = existingProductListing != null;
-        
-        // properties that the user may not change
-        productLsting.setCreatedAt(exists ? existingProductListing.getCreatedAt() : new Date());
     }
 
     public void deleteGameListing(String id) {
