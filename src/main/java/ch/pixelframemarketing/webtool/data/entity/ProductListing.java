@@ -1,6 +1,7 @@
 package ch.pixelframemarketing.webtool.data.entity;
 
 import ch.pixelframemarketing.webtool.general.enums.Visibility;
+import ch.pixelframemarketing.webtool.general.exception.ValidationException;
 import ch.pixelframemarketing.webtool.general.util.StringArrayConverter;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -9,7 +10,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @MappedSuperclass
 @Getter
@@ -50,8 +53,22 @@ public class ProductListing {
     private Page page;
     
     
-    public void validate(ProductListing existing) {
+    public void validate(ProductListing existing) throws ValidationException {
         boolean exists = existing != null;
+
+        Map<String, String> errors = new HashMap<String, String>();
+        
+        if (title == null || title.trim().isEmpty()) {
+            errors.put("title", "Title cannot be empty");
+        }
+        if (description == null || description.trim().isEmpty()) {
+            errors.put("description", "Description cannot be empty");
+        }
+        if (page == null || page.getContent() == null || page.getContent().trim().isEmpty()) {
+            errors.put("pageContent", "Page Content cannot be empty");
+        }
+        
+        if (!errors.isEmpty()) throw new ValidationException(errors);
 
         // properties that the user may not change
         setCreatedAt(exists ? existing.getCreatedAt() : new Date());

@@ -15,11 +15,16 @@ import lombok.Setter;
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class ImageMetadata {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", unique = true, updatable = false)
     private String id;
     
     private String fileType;
+    
+    @ManyToOne
+    @JoinColumn(name = "owner_id", nullable = true)
+    private User owner;
+    
+    private String dropboxShareLink;
     
     public ImageMetadata(String id){
         this.id = id;

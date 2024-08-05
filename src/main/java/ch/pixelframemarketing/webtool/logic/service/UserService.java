@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.context.annotation.SessionScope;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -28,9 +29,6 @@ public class UserService {
     
     @Autowired
     private UserRepository userRepository;
-    
-    @Autowired
-    private ImageRepository imageRepository;
     
     @Getter
     private User currentUser = null;
@@ -60,19 +58,18 @@ public class UserService {
     }
 
     public User createUser(UserDTO userDTO) {
-        validateUserDTO(userDTO);
+        validateUserDTO(userDTO, true);
         
         userDTO.password = PASSWORD_ENCODER.encode(userDTO.password);
         User user = new User();
-        userDTO.transferToEntity(user);
+        userDTO.transferToEntity(user, true);
         return userRepository.save(user);
     }
 
     public User updateUser(UserDTO userDTO) {
-        validateUserDTO(userDTO);
-        
+        validateUserDTO(userDTO, false);
         User user = findUserById(userDTO.id);
-        userDTO.transferToEntity(user);
+        userDTO.transferToEntity(user, false);
         return userRepository.save(user);
     }
     
@@ -83,17 +80,27 @@ public class UserService {
         if (!currentUser.getId().equals(ownerId)) throw new SecurityException();
     }
 
-    private void validateUserDTO(UserDTO userDTO) {
+    private void validateUserDTO(UserDTO userDTO, boolean validatePassword) {
         Map<String, String> errors = new HashMap<>();
         if (userDTO.imageId == null || userDTO.imageId.isEmpty()) userDTO.imageId = ImageService.DEFAULT_USER_IMAGE_ID;
+        userDTO.email = userDTO.email.toLowerCase();
+
+        List<User> existingUsers = userRepository.findByEmailOrUsername(userDTO.email, userDTO.username);
+        for (User existingUser : existingUsers) {
+            if (existingUser.getId().equals(userDTO.id)) continue;
+            if (existingUser.getEmail().equals(userDTO.email)) errors.put("email", "Email already in use.");
+            if (existingUser.getUsername().equals(userDTO.username)) errors.put("username", "A user with that name already exists.");
+        }
         
         if (userDTO.username == null || userDTO.username.isEmpty()) errors.put("username", "Username cannot be empty");
         else if (userDTO.username.length() < MIN_USERNAME_LENGTH) errors.put("username", "Username must be at least " + MIN_USERNAME_LENGTH + " characters");
         else if (userDTO.username.length() > MAX_USERNAME_LENGTH) errors.put("username", "Username cannot exceed " + MAX_USERNAME_LENGTH + " characters");
         
-        if (userDTO.password == null || userDTO.password.isEmpty()) errors.put("password", "Password cannot be empty");
-        else if (userDTO.password.length() < MIN_PASSWORD_LENGTH) errors.put("password", "Password must be at least " + MIN_PASSWORD_LENGTH + " characters");
-        else if (userDTO.password.length() > MAX_PASSWORD_LENGTH) errors.put("password", "Password cannot exceed " + MAX_PASSWORD_LENGTH + " characters");
+        if (validatePassword) {
+            if (userDTO.password == null || userDTO.password.isEmpty()) errors.put("password", "Password cannot be empty");
+            else if (userDTO.password.length() < MIN_PASSWORD_LENGTH) errors.put("password", "Password must be at least " + MIN_PASSWORD_LENGTH + " characters");
+            else if (userDTO.password.length() > MAX_PASSWORD_LENGTH) errors.put("password", "Password cannot exceed " + MAX_PASSWORD_LENGTH + " characters");
+        }
         
         if (userDTO.email == null || userDTO.email.isEmpty()) errors.put("email", "Email cannot be empty");
         else if (!EmailValidator.getInstance().isValid(userDTO.email)) errors.put("email", "Invalid email");

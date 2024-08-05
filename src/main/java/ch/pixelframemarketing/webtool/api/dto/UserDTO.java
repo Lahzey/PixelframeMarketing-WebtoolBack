@@ -2,14 +2,11 @@ package ch.pixelframemarketing.webtool.api.dto;
 
 import ch.pixelframemarketing.webtool.data.entity.ImageMetadata;
 import ch.pixelframemarketing.webtool.data.entity.User;
-import ch.pixelframemarketing.webtool.data.repository.ImageRepository;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
-@NoArgsConstructor
 @AllArgsConstructor
-@JsonInclude(JsonInclude.Include.ALWAYS)
+@NoArgsConstructor
 public class UserDTO {
     
     public String id;
@@ -28,10 +25,10 @@ public class UserDTO {
         this.imageId = user.getImageMetadata().getId();
     }
     
-    public void transferToEntity(User user) {
+    public void transferToEntity(User user, boolean transferPassword) {
         user.setUsername(username);
         user.setEmail(email);
-        user.setPassword(password);
+        if (transferPassword) user.setPassword(password);
         user.setRole(role);
         user.setImageMetadata(new ImageMetadata(imageId));
     }

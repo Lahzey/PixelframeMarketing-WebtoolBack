@@ -1,11 +1,15 @@
 package ch.pixelframemarketing.webtool.api.dto;
 
 import ch.pixelframemarketing.webtool.data.entity.Contract;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class ContractDTO {
     
     public String id;

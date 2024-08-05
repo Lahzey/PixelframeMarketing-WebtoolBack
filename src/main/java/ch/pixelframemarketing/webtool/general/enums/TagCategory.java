@@ -1,6 +1,7 @@
 package ch.pixelframemarketing.webtool.general.enums;
 
 public enum TagCategory {
+    TOPIC("Topic", "#8a52a2"),
     TIME("Time", "#a25e52"),
     PLACE("Place", "#7fb0d5"),
     STYLE("Style", "#d2c065"),

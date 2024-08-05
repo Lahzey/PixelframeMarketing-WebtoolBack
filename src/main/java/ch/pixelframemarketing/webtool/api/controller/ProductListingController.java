@@ -6,6 +6,7 @@ import ch.pixelframemarketing.webtool.data.entity.*;
 import ch.pixelframemarketing.webtool.general.enums.ProductType;
 import ch.pixelframemarketing.webtool.logic.service.BrandListingService;
 import ch.pixelframemarketing.webtool.logic.service.GameListingService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,7 @@ public class ProductListingController {
 
     @GetMapping("/{id}")
     @Secure
+    @Transactional(rollbackOn = Exception.class)
     public ResponseEntity<ProductListingDTO> getProductListing(@PathVariable(value = "id") String id) {
         ProductListingDTO result;
         GameListing gameListing = gameListingService.getGameListingOrNull(id);
@@ -31,7 +33,7 @@ public class ProductListingController {
         } else {
             BrandListing brandListing = brandListingService.getBrandListingOrNull(id);
             if (brandListing != null) {
-                result = new ProductListingDTO(brandListing, false);
+                result = new ProductListingDTO(brandListing, true);
             } else {
                 return ResponseEntity.notFound().build();
             }
@@ -41,6 +43,7 @@ public class ProductListingController {
 
     @PostMapping
     @Secure
+    @Transactional(rollbackOn = Exception.class)
     public ResponseEntity<ProductListingDTO> createProductListing(@RequestBody ProductListingDTO productListingDTO) {
         if (productListingDTO.type == ProductType.GAME) {
             productListingDTO = new ProductListingDTO(gameListingService.createGameListing(productListingDTO.toGameListing()), true);
@@ -55,6 +58,7 @@ public class ProductListingController {
     
     @PutMapping("/{id}")
     @Secure
+    @Transactional(rollbackOn = Exception.class)
     public ResponseEntity<ProductListingDTO> updateProductListing(@PathVariable(value = "id") String id, @RequestBody ProductListingDTO productListingDTO) {
         productListingDTO.id = id;
         if (productListingDTO.type == ProductType.GAME) {

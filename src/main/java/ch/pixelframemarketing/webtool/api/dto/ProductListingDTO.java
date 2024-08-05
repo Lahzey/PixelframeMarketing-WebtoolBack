@@ -3,7 +3,9 @@ package ch.pixelframemarketing.webtool.api.dto;
 import ch.pixelframemarketing.webtool.data.entity.*;
 import ch.pixelframemarketing.webtool.general.enums.ProductType;
 import ch.pixelframemarketing.webtool.general.enums.Visibility;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Date;
@@ -15,6 +17,8 @@ import java.util.List;
  */
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class ProductListingDTO {
     
     public ProductType type;
@@ -34,8 +38,6 @@ public class ProductListingDTO {
     public long views = 0;
     public long[] monthlyRevenue = new long[0];
     public ContractDTO[] contracts = new ContractDTO[0];
-    
-    public ProductListingDTO() {}
     
     public ProductListingDTO(ProductListing productListing, boolean fullFetch) {
         if (productListing instanceof GameListing) type = ProductType.GAME;
