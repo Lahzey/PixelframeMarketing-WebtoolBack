@@ -9,10 +9,10 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.InputStream;
 import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
@@ -30,14 +30,12 @@ public class ImageService {
     @Autowired
     private ImageRepository imageRepository;
     
+    @Autowired
+    private DbxClientV2 dropboxClient;
+    
     public static final String DEFAULT_USER_IMAGE_ID = "default_user_image";
-
-    private static final String DROPBOX_CLIENT_IDENTIFIER = "PixelframeMarketing-WebtoolBack";
-    private static final String DROPBOX_ACCESS_TOKEN = "sl.B6affBTJnh7fi_l3kVhiDPcQh3UD55-UjNWr1B-65SsjEsN-G8KNtT0SSKoFY2x17zK1Tay04sOuTWyD9FUms8ax5AyoXljgrgDq1F_Z8u7Mx3YQCVNO0MH2L3-qjkoIKVYxypaxbmErWZg";
+    
     private static final long MAX_IMAGE_FILE_SIZE = 5000000;
-
-    private DbxRequestConfig dropboxConfig = DbxRequestConfig.newBuilder(DROPBOX_CLIENT_IDENTIFIER).build();
-    private DbxClientV2 dropboxClient = new DbxClientV2(dropboxConfig, DROPBOX_ACCESS_TOKEN);
     
     
     public ImageMetadata getImage(String id) {

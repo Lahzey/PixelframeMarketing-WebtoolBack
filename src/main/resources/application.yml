@@ -1,14 +1,4 @@
 spring:
-#  datasource:
-#    url: jdbc:postgresql://127.0.0.1:5432/webtool
-#    username: postgres
-#    password: 1234
-  datasource:
-    url: jdbc:postgres://u91dn5akuqifs8:pd28efd53eec6fa28c57420710d91c3b7753d987ee0a74c20ea973f479256664f@cah8ha8ra8h8i7.cluster-czz5s0kz4scl.eu-west-1.rds.amazonaws.com:5432/dim3u372703ov
-    username: u91dn5akuqifs8
-    password: pd28efd53eec6fa28c57420710d91c3b7753d987ee0a74c20ea973f479256664f
-    hikari:
-      max-lifetime: 20000
   jpa:
     database-platform: org.hibernate.dialect.PosgreSQLInnoDBDialect
     generate-ddl: true
