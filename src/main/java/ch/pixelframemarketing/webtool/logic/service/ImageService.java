@@ -4,6 +4,8 @@ import ch.pixelframemarketing.webtool.data.entity.ImageMetadata;
 import ch.pixelframemarketing.webtool.data.repository.ImageRepository;
 import ch.pixelframemarketing.webtool.general.exception.ValidationException;
 import com.dropbox.core.DbxRequestConfig;
+import com.dropbox.core.oauth.DbxCredential;
+import com.dropbox.core.v2.DbxAppClientV2;
 import com.dropbox.core.v2.DbxClientV2;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;

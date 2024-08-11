@@ -1,8 +1,7 @@
 package ch.pixelframemarketing.webtool.logic.service;
 
-import ch.pixelframemarketing.webtool.data.entity.User;
 import ch.pixelframemarketing.webtool.api.dto.UserDTO;
-import ch.pixelframemarketing.webtool.data.repository.ImageRepository;
+import ch.pixelframemarketing.webtool.data.entity.User;
 import ch.pixelframemarketing.webtool.data.repository.UserRepository;
 import ch.pixelframemarketing.webtool.general.exception.ValidationException;
 import lombok.Getter;
@@ -16,6 +15,7 @@ import org.springframework.web.context.annotation.SessionScope;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @SessionScope
@@ -33,8 +33,8 @@ public class UserService {
     @Getter
     private User currentUser = null;
 
-    public User findUserById(String id) {
-        return userRepository.findById(id).orElseThrow();
+    public Optional<User> findUserById(String id) {
+        return userRepository.findById(id);
     }
     
     public boolean login(String email, String password) {
@@ -68,7 +68,7 @@ public class UserService {
 
     public User updateUser(UserDTO userDTO) {
         validateUserDTO(userDTO, false);
-        User user = findUserById(userDTO.id);
+        User user = findUserById(userDTO.id).orElseThrow();
         userDTO.transferToEntity(user, false);
         return userRepository.save(user);
     }

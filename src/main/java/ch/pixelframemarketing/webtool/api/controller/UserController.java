@@ -18,7 +18,8 @@ public class UserController {
     @GetMapping("/{id}")
     @Secure
     public ResponseEntity<UserDTO> getUser(@PathVariable("id") String id) {
-        User user = userService.findUserById(id);
+        User user = userService.findUserById(id).orElse(null);
+        if (user == null) return ResponseEntity.notFound().build();
         return ResponseEntity.ok(new UserDTO(user));
     }
 
