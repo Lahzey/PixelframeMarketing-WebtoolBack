@@ -72,6 +72,14 @@ public class ProductListingController {
         return ResponseEntity.ok(productListingDTO);
     }
 
+    @DeleteMapping("/{id}")
+    @Secure
+    public ResponseEntity<Void> deleteProductListing(@PathVariable(value = "id") String id) {
+        gameListingService.deleteGameListing(id);
+        brandListingService.deleteBrandListing(id);
+        return ResponseEntity.ok().build();
+    }
+
     @GetMapping
     @Secure
     public ResponseEntity<Page<ProductListingDTO>> fitlerProductListings(
