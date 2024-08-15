@@ -1,6 +1,7 @@
 package ch.pixelframemarketing.webtool.logic.service;
 
 import ch.pixelframemarketing.webtool.data.entity.GameListing;
+import ch.pixelframemarketing.webtool.data.entity.User;
 import ch.pixelframemarketing.webtool.data.repository.GameListingRepository;
 import ch.pixelframemarketing.webtool.data.repository.ProductListingSpecification;
 import jakarta.transaction.Transactional;
@@ -20,15 +21,20 @@ import java.util.ArrayList;
 @Transactional(rollbackOn = Exception.class)
 @RequiredArgsConstructor
 public class GameListingService {
+
+    @Autowired
+    private UserService userService;
     
     @Autowired
     private GameListingRepository gameListingRepository;
     
 
     public Page<GameListing> filter(String ownerId, String title, int page, int size) {
+        User user = userService.getCurrentUser();
         Specification<GameListing> spec = Specification
                 .where(new ProductListingSpecification<GameListing>().ownerIdEquals(ownerId))
-                .and(new ProductListingSpecification<GameListing>().titleContains(title));
+                .and(new ProductListingSpecification<GameListing>().titleContains(title))
+                .and(new ProductListingSpecification<GameListing>().publicOrOwned(user.getId(), user.getRole() == User.Role.ADMIN));
         return gameListingRepository.findAll(spec, PageRequest.of(page, size, Sort.by("createdAt").descending()));
     }
 
